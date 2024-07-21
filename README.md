@@ -15,3 +15,5 @@ add .env
 >BASE_URL=api_url
 
 npm start
+
+Check it out: https://chat.r1.clouderdog.online/
