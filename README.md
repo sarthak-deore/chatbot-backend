@@ -10,9 +10,21 @@ add .env
 
 >ORIGIN=frontend origin url for cors validation
 
+>MODEL=chat_model
+
 >API_KEY=api_key
 
 >BASE_URL=api_url
+
+>SMTP_USER=smtp_user
+
+>SMTP_PASS=smtp_pass
+
+>SMTP_EMAIL=sender_email
+
+>SMTP_HOST=smtp_host
+
+>SMTP_PORT=smtp_port
 
 npm start
 
