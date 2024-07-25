@@ -6,11 +6,15 @@ const jwt = require("jsonwebtoken");
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    age: {
-      type: Number,
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
       validate(value) {
-        if (value < 0) {
-          throw new Error("Age must be a +ve number");
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid Email");
         }
       },
     },
@@ -25,18 +29,11 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    email: {
-      type: String,
-      unique: true,
-      required: true,
-      trim: true,
-      lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("Invalid Email");
-        }
-      },
-    },
+
+    otp: { type: String },
+
+    verified: { type: Boolean, default: false },
+
     tokens: [
       {
         token: {
@@ -59,6 +56,32 @@ userSchema.methods.generateAuthToken = async function () {
   user.tokens = user.tokens.concat({ token });
   user.save();
   return token;
+};
+
+userSchema.methods.generateOTP = async function () {
+  const user = this;
+  const length = 6;
+  const digits = "123456789";
+  const letters = "ABCDEFGHIJKLMNPQRSTUVWXYZ";
+  const characters = digits + letters;
+
+  let otp = "";
+  // Ensure at least one digit
+  otp += digits[Math.floor(Math.random() * digits.length)];
+  // Ensure at least one letter
+  otp += letters[Math.floor(Math.random() * letters.length)];
+
+  for (let i = 2; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    otp += characters[randomIndex];
+  }
+
+  // Shuffle the OTP to randomize the order
+  otp = otp
+    .split("")
+    .sort(() => 0.5 - Math.random())
+    .join("");
+  return otp;
 };
 
 userSchema.methods.toJSON = function () {
